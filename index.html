@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>小园助手 · 幼儿园家校沟通平台</title>
+  <title>小园助手 · 家校沟通平台</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { margin: 0; font-family: "Comic Sans MS", "Helvetica Neue", sans-serif; background: #fef6f6; }
@@ -24,18 +24,15 @@
   </style>
 </head>
 <body>
-<header>小园助手 · 幼儿园家校沟通平台</header>
+<header>小园助手 · 家校沟通平台</header>
 <nav>
   <button onclick="show('chat')">小园聊天</button>
   <button onclick="show('notice')">园内通知</button>
   <button onclick="show('activity')">活动通知</button>
-  <button onclick="show('weather')">今日天气</button>
-  <button onclick="show('hot')">育儿资讯</button>
-  <button onclick="show('jieqi')">节气知识</button>
 </nav>
 <section id="chat" class="active">
   <div class="chat-container" id="chatBox">
-    <div class="msg bot">🎀 你好呀，我是小园！家长朋友们，有什么问题可以问我哦～</div>
+    <div class="msg bot">🎀 你好呀，我是朝阳区第一实验幼儿园的智能助手小园！家长朋友们，有什么问题可以问我哦～</div>
   </div>
   <div class="input-area">
     <input id="userInput" placeholder="请输入..." />
@@ -43,10 +40,7 @@
   </div>
 </section>
 <section id="notice"><h2>📢 园内通知</h2><ul><li><strong>2025-05-01</strong> 五一劳动节放假安排</li><li><strong>2025-04-25</strong> 春游活动温馨提示</li></ul></section>
-<section id="activity"><h2>🏃‍♂️ 园内活动通知</h2><ul><li><strong>4月28日</strong>：亲子运动会（上午9点，操场集合）</li><li><strong>5月6日</strong>：春游踏青（全天活动，备好午餐）</li></ul></section>
-<section id="weather"><h2>☀ 今日天气（长春）</h2><p id="weatherData">加载中...</p></section>
-<section id="hot"><h2>🌟 育儿资讯</h2><ul id="hotList"><li>加载中...</li></ul></section>
-<section id="jieqi"><h2>📅 二十四节气</h2><div id="jieqiData">加载中...</div></section>
+<section id="activity"><h2>🏃‍♂️ 园内活动通知</h2><ul><li><strong>4月30日</strong>：五一放假准备</li><li><strong>5月6日</strong>：开学准备</li></ul></section>
 <script>
 function show(id) {
   document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
@@ -73,7 +67,7 @@ async function send() {
       body: JSON.stringify({
         model: "deepseek-chat",
         messages: [
-          { role: "system", content: "你是幼儿园小园AI助手，温柔、耐心地为家长朋友解答育儿、园内事务、天气、节气相关问题。" },
+          { role: "system", content: "你是幼儿园小园AI助手，温柔、耐心地为家长朋友解答幼儿教育、园内通知等相关问题，涉及到园内通知关键词时，结合园内通知的文字信息回答。" },
           { role: "user", content: text }
         ]
       })
