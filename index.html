@@ -2,16 +2,13 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>小园助手 · 家校沟通平台</title>
+  <title>小园助手 · 幼儿园家校沟通平台</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { margin: 0; font-family: "Comic Sans MS", "Helvetica Neue", sans-serif; background: #fef6f6; }
     header { background: #f48fb1; color: white; text-align: center; padding: 1rem; font-size: 1.5rem; }
-    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; background: #ffeef2; padding: 1rem; box-shadow: 0 1px 5px rgba(0,0,0,0.05); }
-    nav button {
-      padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid #f48fb1;
-      background: white; color: #f06292; font-weight: bold; cursor: pointer;
-    }
+    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; background: #ffeef2; padding: 1rem; }
+    nav button { padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid #f48fb1; background: white; color: #f06292; font-weight: bold; cursor: pointer; }
     section { display: none; max-width: 720px; margin: 2rem auto; background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
     section.active { display: block; }
     .chat-container { display: flex; flex-direction: column; gap: 1rem; max-height: 60vh; overflow-y: auto; }
@@ -19,33 +16,59 @@
     .user { align-self: flex-end; background: #f48fb1; color: white; }
     .bot { align-self: flex-start; background: #ffeef2; }
     .input-area { display: flex; margin-top: 1rem; }
-    .input-area input { flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; }
+    .input-area input, .input-area textarea { flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; margin-bottom: 0.5rem; }
     .input-area button { margin-left: 0.5rem; background: #f48fb1; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
-<header>小园助手 · 家校沟通平台</header>
+<header>小园助手 · 幼儿园家校沟通平台</header>
 <nav>
   <button onclick="show('chat')">小园聊天</button>
   <button onclick="show('notice')">园内通知</button>
   <button onclick="show('activity')">活动通知</button>
+  <button onclick="show('weather')">今日天气</button>
+  <button onclick="show('hot')">育儿资讯</button>
+  <button onclick="show('jieqi')">节气知识</button>
+  <button onclick="show('message')">留言板</button>
 </nav>
+
 <section id="chat" class="active">
   <div class="chat-container" id="chatBox">
-    <div class="msg bot">🎀 你好呀，我是朝阳区第一实验幼儿园的智能助手小园！家长朋友们，有什么问题可以问我哦～</div>
+    <div class="msg bot">🎀 你好呀，我是小园！家长朋友们，有什么问题可以问我哦～</div>
   </div>
   <div class="input-area">
     <input id="userInput" placeholder="请输入..." />
     <button onclick="send()">发送</button>
   </div>
 </section>
+
 <section id="notice"><h2>📢 园内通知</h2><ul><li><strong>2025-05-01</strong> 五一劳动节放假安排</li><li><strong>2025-04-25</strong> 春游活动温馨提示</li></ul></section>
-<section id="activity"><h2>🏃‍♂️ 园内活动通知</h2><ul><li><strong>4月30日</strong>：五一放假准备</li><li><strong>5月6日</strong>：开学准备</li></ul></section>
+
+<section id="activity"><h2>🏃‍♂️ 园内活动通知</h2><ul><li><strong>4月28日</strong>：亲子运动会（上午9点，操场集合）</li><li><strong>5月6日</strong>：春游踏青（全天活动）</li></ul></section>
+
+<section id="weather"><h2>☀ 今日天气（长春）</h2><p id="weatherData">加载中...</p></section>
+
+<section id="hot"><h2>🌟 育儿资讯</h2><ul id="hotList"><li>加载中...</li></ul></section>
+
+<section id="jieqi"><h2>📅 二十四节气</h2><div id="jieqiData">加载中...</div></section>
+
+<section id="message">
+  <h2>💬 留言板</h2>
+  <div class="input-area">
+    <input type="text" id="name" placeholder="姓名" />
+    <textarea id="content" placeholder="留言内容" rows="3"></textarea>
+    <button onclick="submitMessage()">提交留言</button>
+  </div>
+  <h3>留言列表</h3>
+  <ul id="messageList"><li>加载中...</li></ul>
+</section>
+
 <script>
 function show(id) {
   document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 }
+
 async function send() {
   const input = document.getElementById("userInput");
   const text = input.value.trim();
@@ -57,19 +80,14 @@ async function send() {
   bot.textContent = "思考中...";
   box.appendChild(bot);
   input.value = "";
+
   try {
     const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer sk-f9b2fada759840ae833aeee0d4fc0cbb"
-      },
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer 你的DeepSeekKey" },
       body: JSON.stringify({
         model: "deepseek-chat",
-        messages: [
-          { role: "system", content: "你是幼儿园小园AI助手，温柔、耐心地为家长朋友解答幼儿教育、园内通知等相关问题，涉及到园内通知关键词时，结合园内通知的文字信息回答。" },
-          { role: "user", content: text }
-        ]
+        messages: [{ role: "system", content: "你是幼儿园小园AI助手，耐心温柔解答家长问题。" }, { role: "user", content: text }]
       })
     });
     const data = await res.json();
@@ -79,43 +97,38 @@ async function send() {
   }
 }
 
-fetch("https://xiaodian-proxy.vercel.app/api/weather")
-.then(r => r.json())
-.then(d => {
-  document.getElementById("weatherData").innerText = `${d.result.area}，${d.result.weather}，${d.result.low}~${d.result.high}℃，${d.result.wind}，${d.result.windsc}级`;
-}).catch(e => {
-  document.getElementById("weatherData").innerText = "天气加载失败：" + e.message;
-});
-
-fetch("https://xiaodian-proxy.vercel.app/api/hot")
-.then(r => r.json())
-.then(d => {
-  const list = d.result?.list || [];
-  const ul = document.getElementById("hotList");
-  ul.innerHTML = "";
-  list.slice(0, 5).forEach(item => {
-    const li = document.createElement("li");
-    li.textContent = item.title;
-    ul.appendChild(li);
+async function submitMessage() {
+  const name = document.getElementById("name").value.trim();
+  const content = document.getElementById("content").value.trim();
+  if (!name || !content) {
+    alert("请填写完整信息！");
+    return;
+  }
+  await fetch("/api/save-message", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, content })
   });
-}).catch(e => {
-  document.getElementById("hotList").innerHTML = "<li>热点加载失败：" + e.message + "</li>";
-});
+  loadMessages();
+}
 
-fetch("https://xiaodian-proxy.vercel.app/api/jieqi")
-.then(r => r.json())
-.then(d => {
-  const j = d.result?.list || [];
-  let html = "<ul>";
-  j.forEach(i => {
-    html += `<li><strong>${i.name}</strong>（${i.date}）：${i.des}</li>`;
+function loadMessages() {
+  fetch("/api/get-messages")
+  .then(r => r.json())
+  .then(data => {
+    const ul = document.getElementById("messageList");
+    ul.innerHTML = "";
+    (data.messages || []).forEach(msg => {
+      const li = document.createElement("li");
+      li.textContent = `${msg.name}: ${msg.content}`;
+      ul.appendChild(li);
+    });
+  }).catch(err => {
+    document.getElementById("messageList").innerText = "留言加载失败：" + err.message;
   });
-  html += "</ul>";
-  document.getElementById("jieqiData").innerHTML = html;
-})
-.catch(e => {
-  document.getElementById("jieqiData").innerText = "节气加载失败：" + e.message;
-});
+}
+
+window.onload = loadMessages;
 </script>
 </body>
 </html>
