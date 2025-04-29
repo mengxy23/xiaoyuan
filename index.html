@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>小园助手 · 幼儿园家校沟通平台</title>
+  <title>小园助手 · 家校沟通平台</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { margin: 0; font-family: "Comic Sans MS", "Helvetica Neue", sans-serif; background: #fef6f6; }
@@ -21,7 +21,7 @@
   </style>
 </head>
 <body>
-<header>小园助手 · 幼儿园家校沟通平台</header>
+<header>小园助手 · 家校沟通平台</header>
 <nav>
   <button onclick="show('chat')">小园聊天</button>
   <button onclick="show('notice')">园内通知</button>
@@ -42,7 +42,7 @@
   </div>
 </section>
 
-<section id="notice"><h2>📢 园内通知</h2><ul><li><strong>2025-05-01</strong> 五一劳动节放假安排</li><li><strong>2025-04-25</strong> 春游活动温馨提示</li></ul></section>
+<section id="notice"><h2>📢 园内通知</h2><ul><li><strong>2025-05-01</strong> 五一劳动节放假安排</li><li><strong>2025-04-29</strong> 大班帐篷节</li></ul></section>
 
 <section id="activity"><h2>🏃‍♂️ 园内活动通知</h2><ul><li><strong>4月28日</strong>：亲子运动会（上午9点，操场集合）</li><li><strong>5月6日</strong>：春游踏青（全天活动）</li></ul></section>
 
@@ -84,7 +84,7 @@ async function send() {
   try {
     const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer 你的DeepSeekKey" },
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer sk-f9b2fada759840ae833aeee0d4fc0cbb" },
       body: JSON.stringify({
         model: "deepseek-chat",
         messages: [{ role: "system", content: "你是幼儿园小园AI助手，耐心温柔解答家长问题。" }, { role: "user", content: text }]
